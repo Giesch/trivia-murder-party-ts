@@ -22,6 +22,7 @@ const gameState = {
         ...triviaQuestions[0].incorrect_answers,
     ],
     started: false,
+    colors: ['rgb(0, 0, 255)', 'rgb(255, 0, 0)'],
 
     interval: null,
     secondsRemaining: 10,
@@ -108,14 +109,14 @@ const sketch = (p: p5) => {
             p.textSize(12);
             p.text("Use D-PAD to move", WIDTH / 2, HEIGHT / 2 + 30);
 
-            if (SYSTEM.ONE_PLAYER) {
+            if (SYSTEM.ONE_PLAYER || SYSTEM.TWO_PLAYER) {
                 gameState.started = true;
             }
             return;
         }
 
         playerInput(PLAYER_1, 0);
-        playerInput(PLAYER_2, 0);
+        playerInput(PLAYER_2, 1);
 
         const textHeight = 12;
         p.textAlign(p.LEFT, p.TOP);
@@ -127,10 +128,16 @@ const sketch = (p: p5) => {
         gameState.answersArray.forEach((ans, idx) => {
             const offset = idx + 1;
             p.fill(255);
-            p.text(ans, 50, 50 + textHeight * offset);
+            p.text(ans, 60, 50 + textHeight * offset);
+
             if (gameState.selectedAnswers[0] === idx) {
-                p.fill(0, 0, 255);
+                p.fill(gameState.colors[0]);
                 p.ellipse(30, 50 + textHeight * offset + (textHeight / 2), ballSize, ballSize);
+            }
+
+            if (gameState.selectedAnswers[1] === idx) {
+                p.fill(gameState.colors[1]);
+                p.ellipse(30 + ballSize * 1.25, 50 + textHeight * offset + (textHeight / 2), ballSize, ballSize);
             }
         })
 
