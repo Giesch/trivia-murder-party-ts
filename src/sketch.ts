@@ -7,14 +7,15 @@ const WIDTH = 336;
 const HEIGHT = 262;
 
 const gameState = {
-    lastFrame: {
-        PLAYER_1: { DPAD: {} },
-        PLAYER_2: { DPAD: {} }
-    },
+    lastFrame: [
+        {},
+        {}
+    ],
     // the indexes of the players' currently selected answers, by player index
     selectedAnswers: [0, 0],
     // the two players' scores, by player index
     playerScores: [0, 0],
+    question: triviaQuestions[0].question,
     correctAnswer: triviaQuestions[0].correct_answer,
     answersArray: [
         triviaQuestions[0].correct_answer,
@@ -66,7 +67,6 @@ function checkScore() {
 }
 
 function setQuestion() {
-    gameState.correctAnswer = triviaQuestions[0].correct_answer;
 
     // TODO regenerate with p5 (this was writing to the question id element)
     // question.textContent = triviaQuestions[0].question;
@@ -87,8 +87,7 @@ const sketch = (p: p5) => {
     let x: number;
     let y: number;
     const speed = 4;
-    const ballSize = 20;
-    let gameStarted = false;
+    const ballSize = 10;
 
     p.setup = () => {
         p.createCanvas(WIDTH, HEIGHT);
@@ -99,58 +98,79 @@ const sketch = (p: p5) => {
     p.draw = () => {
         p.background(26, 26, 46);
 
-        if (!gameStarted) {
+        if (!gameState.started) {
             // Show start screen
             p.fill(255);
             p.textSize(18);
             p.textAlign(p.CENTER, p.CENTER);
+            p.text("Trivia Murder Party", WIDTH / 2, HEIGHT / 2 - 30);
             p.text("Press 1P START", WIDTH / 2, HEIGHT / 2);
             p.textSize(12);
             p.text("Use D-PAD to move", WIDTH / 2, HEIGHT / 2 + 30);
 
             if (SYSTEM.ONE_PLAYER) {
-                gameStarted = true;
+                gameState.started = true;
             }
             return;
         }
 
-        // Handle input from arcade controls
-        if (PLAYER_1.DPAD.up) {
-            y -= speed;
-        }
-        if (PLAYER_1.DPAD.down) {
-            y += speed;
-        }
-        if (PLAYER_1.DPAD.left) {
-            x -= speed;
-        }
-        if (PLAYER_1.DPAD.right) {
-            x += speed;
-        }
+        playerInput(PLAYER_1, 0);
+        playerInput(PLAYER_2, 0);
 
-        // Keep ball in bounds
-        x = p.constrain(x, ballSize / 2, WIDTH - ballSize / 2);
-        y = p.constrain(y, ballSize / 2, HEIGHT - ballSize / 2);
+        const textHeight = 12;
+        p.textAlign(p.LEFT, p.TOP);
+        p.textSize(textHeight);
+        p.fill(255);
+        p.text(gameState.question, 30, 30, WIDTH);
+        p.fill(0, 0, 255);
 
-        // Draw ball (change color when A is pressed)
-        if (PLAYER_1.A) {
-            p.fill(255, 100, 100);
-        } else if (PLAYER_1.B) {
-            p.fill(100, 255, 100);
-        } else {
-            p.fill(100, 200, 255);
-        }
-        p.noStroke();
-        p.ellipse(x, y, ballSize, ballSize);
+        gameState.answersArray.forEach((ans, idx) => {
+            const offset = idx + 1;
+            p.fill(255);
+            p.text(ans, 50, 50 + textHeight * offset);
+            if (gameState.selectedAnswers[0] === idx) {
+                p.fill(0, 0, 255);
+                p.ellipse(30, 50 + textHeight * offset + (textHeight / 2), ballSize, ballSize);
+            }
+        })
+
+        // // Handle input from arcade controls
+        // if (PLAYER_1.DPAD.up) {
+        //     y -= speed;
+        // }
+        // if (PLAYER_1.DPAD.down) {
+        //     y += speed;
+        // }
+        // if (PLAYER_1.DPAD.left) {
+        //     x -= speed;
+        // }
+        // if (PLAYER_1.DPAD.right) {
+        //     x += speed;
+        // }
+
+        // // Keep ball in bounds
+        // x = p.constrain(x, ballSize / 2, WIDTH - ballSize / 2);
+        // y = p.constrain(y, ballSize / 2, HEIGHT - ballSize / 2);
+
+        // // Draw ball (change color when A is pressed)
+        // if (PLAYER_1.A) {
+        //     p.fill(255, 100, 100);
+        // } else if (PLAYER_1.B) {
+        //     p.fill(100, 255, 100);
+        // } else {
+        //     p.fill(100, 200, 255);
+        // }
+        // p.noStroke();
+        // p.ellipse(x, y, ballSize, ballSize);
 
         // store inputs for next frames previous input
-        gameState.lastFrame.PLAYER_1.DPAD = structuredClone(PLAYER_1.DPAD);
-        gameState.lastFrame.PLAYER_2.DPAD = structuredClone(PLAYER_2.DPAD);
+        gameState.lastFrame[0] = structuredClone(PLAYER_1.DPAD);
+        gameState.lastFrame[1] = structuredClone(PLAYER_2.DPAD);
     };
 };
 
 function playerInput(player, playerIndex) {
-    if (player.DPAD.up && !player.LAST_FRAME.DPAD.up) {
+    if (player.DPAD.up && !gameState.lastFrame[playerIndex].up) {
         gameState.selectedAnswers[playerIndex]--;
 
         if (gameState.selectedAnswers[playerIndex] < 0) {
@@ -159,7 +179,7 @@ function playerInput(player, playerIndex) {
         }
     }
 
-    if (player.DPAD.down && !player.LAST_FRAME.DPAD.down) {
+    if (player.DPAD.down && !gameState.lastFrame[playerIndex].down) {
         gameState.selectedAnswers[playerIndex]++;
 
         if (
