@@ -1,9 +1,87 @@
 import p5 from "p5";
-import { PLAYER_1, SYSTEM } from "@rcade/plugin-input-classic";
+import { PLAYER_1, PLAYER_2, SYSTEM } from "@rcade/plugin-input-classic";
+import triviaQuestions from "./data/trivia.json";
 
 // Rcade game dimensions
 const WIDTH = 336;
 const HEIGHT = 262;
+
+const gameState = {
+    lastFrame: {
+        PLAYER_1: { DPAD: {} },
+        PLAYER_2: { DPAD: {} }
+    },
+    // the indexes of the players' currently selected answers, by player index
+    selectedAnswers: [0, 0],
+    // the two players' scores, by player index
+    playerScores: [0, 0],
+    correctAnswer: triviaQuestions[0].correct_answer,
+    answersArray: [
+        triviaQuestions[0].correct_answer,
+        ...triviaQuestions[0].incorrect_answers,
+    ],
+    started: false,
+
+    interval: null,
+    secondsRemaining: 10,
+};
+
+let countdown: number | null = null;
+
+// TODO regenerate game timer text each frame with p5
+function startCountdown() {
+    clearInterval(countdown as any);
+
+    gameState.secondsRemaining = 10;
+    // gameTimer.textContent = gameState.secondsRemaining;
+
+    countdown = setInterval(() => {
+        gameState.secondsRemaining--;
+        // gameTimer.textContent = gameState.secondsRemaining;
+
+        if (gameState.secondsRemaining <= 0) {
+            clearInterval(countdown as any);
+            checkScore();
+
+            // let p1 = gameState.playerScores[0];
+            // let p2 = gameState.playerScores[1];
+            // gameTimer.textContent = `Time's up! P1: ${p1}, P2: ${p2}`;
+        }
+    }, 1000);
+}
+
+function checkScore() {
+    for (
+        let playerId = 0;
+        playerId < gameState.selectedAnswers.length;
+        playerId++
+    ) {
+        let playerAnswer =
+            gameState.answersArray[gameState.selectedAnswers[playerId]];
+        let playerCorrect = playerAnswer === gameState.correctAnswer;
+        if (playerCorrect) {
+            gameState.playerScores[playerId]++;
+        }
+    }
+}
+
+function setQuestion() {
+    gameState.correctAnswer = triviaQuestions[0].correct_answer;
+
+    // TODO regenerate with p5 (this was writing to the question id element)
+    // question.textContent = triviaQuestions[0].question;
+
+    // TODO regenerate with p5
+    // answers.innerHTML = gameState.answersArray
+    //   .map(
+    //     (answer, idx) => `<div class="answer" id="answer-${idx}">
+    //          <span id="p1-dot"></span>
+    //          <span id="p2-dot"></span>
+    //          ${answer}
+    //       </div>`,
+    //   )
+    //   .join("");
+}
 
 const sketch = (p: p5) => {
     let x: number;
@@ -64,7 +142,38 @@ const sketch = (p: p5) => {
         }
         p.noStroke();
         p.ellipse(x, y, ballSize, ballSize);
+
+        // store inputs for next frames previous input
+        gameState.lastFrame.PLAYER_1.DPAD = structuredClone(PLAYER_1.DPAD);
+        gameState.lastFrame.PLAYER_2.DPAD = structuredClone(PLAYER_2.DPAD);
     };
 };
+
+function playerInput(player, playerIndex) {
+    if (player.DPAD.up && !player.LAST_FRAME.DPAD.up) {
+        gameState.selectedAnswers[playerIndex]--;
+
+        if (gameState.selectedAnswers[playerIndex] < 0) {
+            gameState.selectedAnswers[playerIndex] =
+                gameState.answersArray.length - 1;
+        }
+    }
+
+    if (player.DPAD.down && !player.LAST_FRAME.DPAD.down) {
+        gameState.selectedAnswers[playerIndex]++;
+
+        if (
+            gameState.selectedAnswers[playerIndex] >
+            gameState.answersArray.length - 1
+        ) {
+            gameState.selectedAnswers[playerIndex] = 0;
+        }
+    }
+
+    // TODO draw dots with P5
+    // document
+    //     .getElementById(`answer-${gameState.selectedAnswers[playerIndex]}`)
+    //     .classList.add(`p${playerIndex + 1}-selected`);
+}
 
 new p5(sketch, document.getElementById("sketch")!);

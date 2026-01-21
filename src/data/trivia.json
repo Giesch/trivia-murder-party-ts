@@ -1,0 +1,90 @@
+[
+  {
+    "type": "boolean",
+    "difficulty": "easy",
+    "category": "General Knowledge",
+    "question": "When you cry in space, your tears stick to your face.",
+    "correct_answer": "True",
+    "incorrect_answers": ["False"]
+  },
+  {
+    "type": "boolean",
+    "difficulty": "hard",
+    "category": "General Knowledge",
+    "question": "\"Number 16 Bus Shelter\" was a child's name that was approved by the New Zealand government.",
+    "correct_answer": "False",
+    "incorrect_answers": ["True"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "Directly between the Washington Monument and the Reflecting Pool is a memorial to which war?",
+    "correct_answer": "World War II",
+    "incorrect_answers": [
+      "Vietnam War",
+      "American Civil War",
+      "American Revolutionary War"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "hard",
+    "category": "General Knowledge",
+    "question": "Which product did Nokia, the telecommunications company, originally sell?",
+    "correct_answer": "Paper",
+    "incorrect_answers": ["Phones", "Computers", "Processors"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "Which language is NOT Indo-European?",
+    "correct_answer": "Hungarian",
+    "incorrect_answers": ["Russian", "Greek", "Latvian"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "The phrase \"accident waiting to happen\" is an example of what type of figure of speech?",
+    "correct_answer": "Idiom",
+    "incorrect_answers": ["Simile", "Metaphor", "Analogy"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "Which item of clothing is usually worn by a Scotsman at a wedding?",
+    "correct_answer": "Kilt",
+    "incorrect_answers": ["Skirt", "Dress", "Rhobes"]
+  },
+  {
+    "type": "boolean",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "The vapor produced by e-cigarettes is actually water.",
+    "correct_answer": "False",
+    "incorrect_answers": ["True"]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "What is a \"dakimakura\"?",
+    "correct_answer": "A body pillow",
+    "incorrect_answers": [
+      "A Chinese meal, essentially composed of fish",
+      "A yoga posture",
+      "A word used to describe two people who truly love each other"
+    ]
+  },
+  {
+    "type": "multiple",
+    "difficulty": "medium",
+    "category": "General Knowledge",
+    "question": "The architect known as Le Corbusier was an important figure in what style of architecture?",
+    "correct_answer": "Modernism",
+    "incorrect_answers": ["Neoclassical", "Baroque", "Gothic Revival"]
+  }
+]
