@@ -26,28 +26,28 @@ const gameState = {
 
     interval: null,
     secondsRemaining: 10,
+    timerText: "",
 };
 
 let countdown: number | null = null;
 
-// TODO regenerate game timer text each frame with p5
 function startCountdown() {
     clearInterval(countdown as any);
 
     gameState.secondsRemaining = 10;
-    // gameTimer.textContent = gameState.secondsRemaining;
+    gameState.timerText = gameState.secondsRemaining.toString();
 
     countdown = setInterval(() => {
         gameState.secondsRemaining--;
-        // gameTimer.textContent = gameState.secondsRemaining;
+        gameState.timerText = gameState.secondsRemaining.toString();
 
         if (gameState.secondsRemaining <= 0) {
             clearInterval(countdown as any);
             checkScore();
 
-            // let p1 = gameState.playerScores[0];
-            // let p2 = gameState.playerScores[1];
-            // gameTimer.textContent = `Time's up! P1: ${p1}, P2: ${p2}`;
+            let p1 = gameState.playerScores[0];
+            let p2 = gameState.playerScores[1];
+            gameState.timerText = `Time's up! P1: ${p1}, P2: ${p2}`;
         }
     }, 1000);
 }
@@ -67,27 +67,9 @@ function checkScore() {
     }
 }
 
-function setQuestion() {
-
-    // TODO regenerate with p5 (this was writing to the question id element)
-    // question.textContent = triviaQuestions[0].question;
-
-    // TODO regenerate with p5
-    // answers.innerHTML = gameState.answersArray
-    //   .map(
-    //     (answer, idx) => `<div class="answer" id="answer-${idx}">
-    //          <span id="p1-dot"></span>
-    //          <span id="p2-dot"></span>
-    //          ${answer}
-    //       </div>`,
-    //   )
-    //   .join("");
-}
-
 const sketch = (p: p5) => {
     let x: number;
     let y: number;
-    const speed = 4;
     const ballSize = 10;
 
     p.setup = () => {
@@ -111,6 +93,7 @@ const sketch = (p: p5) => {
 
             if (SYSTEM.ONE_PLAYER || SYSTEM.TWO_PLAYER) {
                 gameState.started = true;
+                startCountdown();
             }
             return;
         }
@@ -140,35 +123,8 @@ const sketch = (p: p5) => {
                 p.ellipse(30 + ballSize * 1.25, 50 + textHeight * offset + (textHeight / 2), ballSize, ballSize);
             }
         })
-
-        // // Handle input from arcade controls
-        // if (PLAYER_1.DPAD.up) {
-        //     y -= speed;
-        // }
-        // if (PLAYER_1.DPAD.down) {
-        //     y += speed;
-        // }
-        // if (PLAYER_1.DPAD.left) {
-        //     x -= speed;
-        // }
-        // if (PLAYER_1.DPAD.right) {
-        //     x += speed;
-        // }
-
-        // // Keep ball in bounds
-        // x = p.constrain(x, ballSize / 2, WIDTH - ballSize / 2);
-        // y = p.constrain(y, ballSize / 2, HEIGHT - ballSize / 2);
-
-        // // Draw ball (change color when A is pressed)
-        // if (PLAYER_1.A) {
-        //     p.fill(255, 100, 100);
-        // } else if (PLAYER_1.B) {
-        //     p.fill(100, 255, 100);
-        // } else {
-        //     p.fill(100, 200, 255);
-        // }
-        // p.noStroke();
-        // p.ellipse(x, y, ballSize, ballSize);
+        p.fill(255);
+        p.text(gameState.timerText, 30, 120, WIDTH);
 
         // store inputs for next frames previous input
         gameState.lastFrame[0] = structuredClone(PLAYER_1.DPAD);
@@ -196,11 +152,6 @@ function playerInput(player, playerIndex) {
             gameState.selectedAnswers[playerIndex] = 0;
         }
     }
-
-    // TODO draw dots with P5
-    // document
-    //     .getElementById(`answer-${gameState.selectedAnswers[playerIndex]}`)
-    //     .classList.add(`p${playerIndex + 1}-selected`);
 }
 
 new p5(sketch, document.getElementById("sketch")!);
