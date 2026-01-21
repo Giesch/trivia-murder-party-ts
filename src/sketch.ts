@@ -6,7 +6,24 @@ import triviaQuestions from "./data/trivia.json";
 const WIDTH = 336;
 const HEIGHT = 262;
 
-const gameState = {
+type Player = typeof PLAYER_1;
+
+type DPad = Partial<Player['DPAD']>;
+
+interface GameState {
+    lastFrame: [DPad, DPad],
+    selectedAnswers: [number, number],
+    playerScores: [number, number],
+    correctAnswer: string,
+    question: string,
+    answersArray: string[],
+    started: boolean,
+    secondsRemaining: number,
+    colors: [string, string],
+    timerText: string
+}
+
+const gameState: GameState = {
     lastFrame: [
         {},
         {}
@@ -24,7 +41,6 @@ const gameState = {
     started: false,
     colors: ['rgb(0, 0, 255)', 'rgb(255, 0, 0)'],
 
-    interval: null,
     secondsRemaining: 10,
     timerText: "",
 };
@@ -68,14 +84,10 @@ function checkScore() {
 }
 
 const sketch = (p: p5) => {
-    let x: number;
-    let y: number;
     const ballSize = 10;
 
     p.setup = () => {
         p.createCanvas(WIDTH, HEIGHT);
-        x = WIDTH / 2;
-        y = HEIGHT / 2;
     };
 
     p.draw = () => {
@@ -132,7 +144,7 @@ const sketch = (p: p5) => {
     };
 };
 
-function playerInput(player, playerIndex) {
+function playerInput(player: Player, playerIndex: number) {
     if (player.DPAD.up && !gameState.lastFrame[playerIndex].up) {
         gameState.selectedAnswers[playerIndex]--;
 
